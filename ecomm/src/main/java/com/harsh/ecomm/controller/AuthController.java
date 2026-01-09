@@ -18,10 +18,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication", description = "Endpoints for user registration and login")
 public class AuthController {
 
     private final UserRepository repository;
@@ -29,6 +34,9 @@ public class AuthController {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    @Operation(summary = "Register a new user", description = "Creates a new user in the system and returns a JWT token", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "User registered successfully", content = @Content(schema = @Schema(implementation = com.harsh.ecomm.util.ApiResponse.class)))
+    })
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<AuthenticationResponse>> register(
             @RequestBody RegisterRequest request) {
@@ -45,6 +53,9 @@ public class AuthController {
                 AuthenticationResponse.builder().token(jwtToken).build(), null));
     }
 
+    @Operation(summary = "Authenticate user", description = "Authenticates user credentials and returns a JWT token", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Authentication successful", content = @Content(schema = @Schema(implementation = com.harsh.ecomm.util.ApiResponse.class)))
+    })
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthenticationResponse>> authenticate(
             @RequestBody AuthenticationRequest request) {
